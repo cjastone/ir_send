@@ -40,15 +40,15 @@ void setup() {
   TCCR2B = 0;                               // clear TCCR2B register
   TCNT2 = 0;                                // initialise TCNT2 counter
 
-  OCR2A = 208;                              // set compare match register A for 208 units (16 MHz / (38.4 kHz * 2))
-  OCR2B = 104;                              // set compare match register B for 104 units for 50% duty cycle
+  OCR2A = 210;                              // set compare match register A for 210 units (16 MHz / (38 kHz * 2))
+  OCR2B = 105;                              // set compare match register B for 105 units for 50% duty cycle
 
   TCCR2A |= (1 << WGM20);                   // enable phase-correct PWM waveform generation
   TCCR2B |= (1 << WGM22);                   // enable OC2A output
   TCCR2B |= (1 << CS20);                    // set prescaler to 1 (no prescaling)
 }
 
-/* wait specified number of pwm cycles for pulse timing */
+/* wait specified number of PWM cycles for pulse timing */
 void wait(uint8_t cycles){
   for (uint8_t count = 0; count < cycles; count++) {
       while ((TIFR2 & (1 << OCF2A)) == 0);  // wait for output compare match flag (will be raised once per cycle)
@@ -56,14 +56,14 @@ void wait(uint8_t cycles){
   }
 }
 
-/* set next pulse to be sent*/
+/* send modulated IR pulse of specifed length */
 void send(uint8_t length) {
   TCCR2A |= (1 << COM0B1);                  // enable PWM output
   wait(length);                             // wait pulse length
   TCCR2A &= ~(1 << COM0B1);                 // disable PWM output
 }
 
-/* send specified ir sequence */
+/* send specified IR pulse sequence */
 void sendSequence(uint64_t sequence) {
   /* send complete preamble sequence prior to bit sequence */
   send(PAN_PULSE_PREAMBLE);                 // send preamble pulse
